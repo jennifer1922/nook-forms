@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Nook Buyer Intake</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one narrow column. An arch-shaped hero (a nook) opens onto a single stepped form panel. */
+:root {
+  --bg: #E3DCCE;
+  --surface: #F1EBE0;
+  --field: #FAF7F1;
+  --fg: #251A1C;
+  --muted: #6A5E5C;
+  --line: #D6CCBA;
+  --tint: #E8E0D2;
+  --accent: #6A1B24;
+  --accent-fg: #FBF3EE;
+  --hero-bg: #5B1720;
+  --hero-fg: #F6EBE3;
+  --gold: #C8A04A;
+  --green: #2F4B3B;
+  --focus: #9A6F22;
+  --error: #A12A2A;
+  --font-display: 'Gloock', Georgia, 'Times New Roman', serif;
+  --font-body: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font: 400 1rem/1.55 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 56px;
+}
+.wrap { max-width: 640px; margin: 0 auto; }
+.preview { display: flex; gap: 8px; align-items: baseline; font-size: .8rem; color: var(--muted); margin: 0 0 14px; }
+.preview b { letter-spacing: .12em; text-transform: uppercase; font-size: .7rem; color: var(--gold); }
+
+.hero {
+  position: relative; background: var(--hero-bg); color: var(--hero-fg); text-align: center;
+  border-radius: 50% 50% 0 0 / 190px 190px 0 0; padding: 72px clamp(22px, 8vw, 64px) 36px;
+}
+.hero::before {
+  content: ""; position: absolute; inset: 10px 10px 0; border: 1px solid var(--gold); border-bottom: 0;
+  border-radius: 50% 50% 0 0 / 180px 180px 0 0; pointer-events: none;
+}
+.hero .eyebrow { font: 700 clamp(1.2rem, 5vw, 1.55rem)/1.2 var(--font-display); letter-spacing: .18em; text-transform: uppercase; color: #D9B25C; -webkit-text-stroke: .5px currentColor; margin: 0 auto 24px; }
+.hero h1 { font: 400 clamp(1.9rem, 6.4vw, 2.7rem)/1.1 var(--font-display); margin: 0 0 14px; text-wrap: balance; }
+.hero p { margin: 0 auto; max-width: 46ch; opacity: .9; }
+.hero .meta { margin-top: 14px; font-size: .85rem; opacity: .7; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); padding: 26px clamp(18px, 5vw, 36px) 30px; }
+.panel.nohero { border-top: 1px solid var(--line); }
+.topline { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; font-size: .8rem; color: var(--muted); }
+.topline b { letter-spacing: .14em; text-transform: uppercase; font-size: .7rem; color: var(--green); }
+.bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 28px; }
+.bar i { height: 4px; background: var(--line); display: block; }
+.bar i.on { background: var(--gold); }
+
+.step { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.step h2 { font: 400 1.65rem/1.15 var(--font-display); margin: 0; text-wrap: balance; }
+.step h2:focus { outline: none; }
+.lead { margin: -14px 0 0; color: var(--muted); }
+.block { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.row > * { min-width: 0; }
+@media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+
+.q { border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.q > label, .q > legend { font-weight: 600; font-size: .97rem; padding: 0; }
+.req { color: var(--accent); margin-left: 2px; }
+.hint { margin: -3px 0 0; font-size: .85rem; color: var(--muted); }
+.hint a { color: var(--green); }
+input[type=text], input[type=email], input[type=tel], input[type=date], select, textarea {
+  width: 100%; font: inherit; font-size: 1rem; color: var(--fg); background: var(--field, var(--surface));
+  border: 1px solid var(--line); border-radius: 8px; padding: 12px 13px; min-height: 48px;
+}
+textarea { resize: vertical; min-height: 92px; }
+select { appearance: auto; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; border-color: var(--focus); }
+.q.bad input, .q.bad select, .q.bad textarea { border-color: var(--error); }
+.err { color: var(--error); font-size: .85rem; margin: 0; font-weight: 500; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.chip span {
+  display: inline-block; padding: 10px 15px; min-height: 44px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--field, var(--surface)); font-size: .93rem; line-height: 1.3; display: flex; align-items: center;
+}
+.chip input:checked + span { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); font-weight: 600; }
+.chip input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+.q.bad .chip span { border-color: var(--error); }
+
+.consent { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; font-size: .92rem; line-height: 1.5; }
+.consent input { width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
+.consent span { color: var(--fg); }
+.consent:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 4px; }
+
+.follow { background: var(--tint); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.group { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.pricebox { background: var(--tint); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.pricereadout { font: 400 1.6rem/1.15 var(--font-display); color: var(--accent); }
+.sl { display: flex; flex-direction: column; gap: 4px; font-size: .88rem; color: var(--muted); }
+.sl b { color: var(--fg); font-weight: 600; }
+.sl input[type=range] { width: 100%; height: 34px; margin: 0; accent-color: var(--accent); }
+.sl input[type=range]:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.fine { font-size: .82rem; color: var(--muted); margin: 0; }
+
+.nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 30px; }
+.btn { font: 600 1rem var(--font-body); border: 0; border-radius: 999px; padding: 14px 30px; min-height: 50px; cursor: pointer; background: var(--accent); color: var(--accent-fg); }
+.btn:hover { filter: brightness(1.08); }
+.btn:focus-visible, .back:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.back { font: 500 .95rem var(--font-body); background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 12px 4px; min-height: 44px; }
+
+.done { text-align: left; display: flex; flex-direction: column; gap: 16px; }
+.done h2 { font: 400 2rem/1.1 var(--font-display); margin: 0; }
+.done p { margin: 0; }
+.done .note { background: var(--tint); border-radius: 10px; padding: 14px 16px; font-size: .88rem; color: var(--muted); }
+
+.foot { margin-top: 22px; text-align: center; font-size: .82rem; color: var(--muted); }
+.foot b { font-weight: 600; color: var(--fg); }
+@media (prefers-reduced-motion: no-preference) { .step, .done { animation: rise .35s ease-out; } }
+@keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero" id="hero">
+    <p class="eyebrow">Nook Realty</p>
+    <h1>Let's find the place that feels like home.</h1>
+    <p>Tell me a little about how you want to live. I'll use your answers to curate homes that fit.</p>
+    <p class="meta">About five minutes. Starred questions are required.</p>
+  </header>
+
+  <main class="panel" id="panel">
+    <div class="topline"><b id="stepName">Step 1 of 5</b><span id="stepTitle"></span></div>
+    <div class="bar" id="bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <form id="intake" novalidate>
+      <div style="position:absolute;left:-9999px" aria-hidden="true"><input name="website" tabindex="-1" autocomplete="off"></div>
+      <div id="steps"></div>
+      <div class="nav">
+        <button type="button" class="back" id="back" hidden>Back</button>
+        <button type="submit" class="btn" id="next">Continue</button>
+      </div>
+    </form>
+    <div id="thanks" hidden></div>
+  </main>
+
+  <p class="foot"><b>Nook Realty Group</b> · (512) 960-2058 · jennifer@nookrealtygroup.com</p>
+</div>
+
+<script>
+(function () {
+  var AREAS = ['South Austin', 'Dripping Springs', 'Downtown', 'North Austin', 'Buda', 'Kyle', 'Wimberley', 'Lakeway', 'Bee Cave', 'Westlake Hills', 'Tarrytown', 'East Austin', 'Round Rock', 'Leander', 'Central Austin', 'Manchaca', 'San Marcos'];
+  var steps = [
+    { title: "Let's start with you", lead: 'So I know who I am talking to and how you like to be reached.', fields: [
+      { type: 'row', fields: [
+        { name: 'first_name', type: 'text', label: 'First name', req: 1, ac: 'given-name' },
+        { name: 'last_name', type: 'text', label: 'Last name', req: 1, ac: 'family-name' } ] },
+      { name: 'email', type: 'email', label: 'Email', req: 1, ac: 'email' },
+      { name: 'phone', type: 'tel', label: 'Mobile phone', req: 1, ac: 'tel', im: 'tel' },
+      { name: 'contact_pref', type: 'check', label: 'How do you like to hear from me?', hint: 'Choose all that work.', opts: ['Call', 'Text', 'Email'], req: 1 },
+      { name: 'best_time', type: 'radio', label: 'When are you easiest to reach?', opts: ['Mornings', 'Afternoons', 'Evenings', 'Anytime'] },
+      { name: 'language', type: 'radio', label: 'Preferred language', opts: ['English', 'Español', 'Either is fine'] },
+      { name: 'has_cobuyer', type: 'radio', label: 'Are you buying with someone?', opts: ['Yes', 'No'], req: 1,
+        follow: [{ when: ['Yes'], fields: [
+          { name: 'cobuyer_name', type: 'text', label: 'Their name' },
+          { name: 'cobuyer_contact', type: 'text', label: 'Their email or phone', hint: 'Optional.' } ] }] },
+      { name: 'source', type: 'select', label: 'How did we connect?', req: 1,
+        opts: ['A friend or past client referred me', 'Instagram', 'Zillow or Realtor.com', 'Google search', 'An open house', 'An event or the community', 'We have already spoken', 'Somewhere else'],
+        follow: [
+          { when: ['A friend or past client referred me'], fields: [{ name: 'referrer_name', type: 'text', label: 'Who should I thank?' }] },
+          { when: ['Somewhere else'], fields: [{ name: 'source_other', type: 'text', label: 'Where did you hear about me?' }] } ] }
+    ] },
+    { title: 'What feels like home', lead: 'Paint me a picture. Rough answers are perfect.', fields: [
+      { name: 'property_type', type: 'check', label: 'What kind of home are you looking for?', hint: 'Choose all that apply.', req: 1,
+        opts: ['Single-family home', 'Condo or townhome', 'Land or acreage', 'Ranch or farm', 'New construction', 'Multi-family or investment'] },
+      { type: 'row', fields: [
+        { name: 'bedrooms', type: 'select', label: 'Bedrooms', opts: ['Any', '2+', '3+', '4+', '5+', '6+'] },
+        { name: 'bathrooms', type: 'select', label: 'Bathrooms', opts: ['Any', '2+', '3+', '4+', '5+'] } ] },
+      { name: 'areas', type: 'check', label: 'Where do you want to be?', hint: 'Choose any that appeal.', opts: AREAS },
+      { name: 'areas_other', type: 'text', label: 'Other areas, zip codes or counties', hint: 'Need help with zip codes? <a href="https://www.mapsofaustin.com/" target="_blank" rel="noopener">This map of Greater Austin</a> is useful.' },
+      { name: 'lot_size', type: 'select', label: 'How much land do you want?', opts: ['Not important', 'Under 1 acre', '1 to 5 acres', '5 to 10 acres', '10+ acres'] },
+      { name: 'hoa', type: 'radio', label: 'How do you feel about an HOA?', opts: ['Fine with one', 'Prefer none', 'No preference'] },
+      { name: 'features', type: 'check', label: 'What would make a home feel right?', hint: 'Choose all that apply.',
+        opts: ['Pool', 'Big backyard', 'Views', 'Single story', 'Home office', 'Guest house or casita', 'Outdoor living space', 'Gated or private', '3+ car garage', 'Room for animals or hobbies'] },
+      { name: 'must_haves', type: 'textarea', label: 'What does the home absolutely need?', hint: 'Your must-haves, in your own words.' },
+      { name: 'nice_to_have', type: 'textarea', label: 'What would be a lovely bonus?' },
+      { name: 'why_moving', type: 'textarea', label: "What's bringing you to a new home?", hint: 'Optional. It helps me understand what matters most.' },
+      { name: 'want_mls', type: 'radio', label: 'Would you like new listings that match sent straight to your inbox?', opts: ['Yes', 'No'], req: 1,
+        follow: [{ when: ['Yes'], fields: [
+          { name: 'mls_frequency', type: 'check', label: 'How often?', opts: ['As matches come in', 'A daily digest', 'A weekly roundup'], req: 1 },
+          { name: 'mls_consent', type: 'consent', req: 1, label: 'I authorize Nook Realty Group to email me recurring listings that match my search. I can unsubscribe at any time.' } ] }] }
+    ] },
+    { title: 'Budget and financing', lead: 'This keeps us focused on homes that make sense. Nothing here is a commitment.', fields: [
+      { name: 'price_range', type: 'price', label: 'What price range are you considering?', hint: 'Slide each end to set your range. Narrow ranges like $475K to $525K are perfect.', req: 1 },
+      { name: 'budget_note', type: 'textarea', label: 'Anything about your budget I should know?', hint: 'Optional.' },
+      { name: 'purchase_type', type: 'radio', label: 'How will you be buying?', opts: ['Cash', 'Financing', 'Not sure yet'], req: 1 },
+      { type: 'group', when: 'purchase_type:Financing|Not sure yet', fields: [
+        { name: 'preapproved', type: 'radio', label: 'Have you been pre-approved for a mortgage?', opts: ['Yes', 'In progress', 'Not yet'], req: 1,
+          follow: [{ when: ['Yes'], fields: [{ name: 'preapproval_amount', type: 'text', label: 'Pre-approval amount', im: 'numeric', ph: '$' }] }] },
+        { name: 'has_lender', type: 'radio', label: 'Are you working with a lender?', opts: ['Yes', 'No'], req: 1,
+          follow: [
+            { when: ['Yes'], fields: [
+              { name: 'lender_name', type: 'text', label: "Lender's name", req: 1 },
+              { type: 'row', fields: [
+                { name: 'lender_phone', type: 'tel', label: 'Lender phone', im: 'tel' },
+                { name: 'lender_email', type: 'email', label: 'Lender email' } ] },
+              { type: 'note', text: 'Add a phone number, an email, or both, so I can coordinate with them.' } ] },
+            { when: ['No'], fields: [
+              { name: 'want_lender_intro', type: 'radio', label: 'Would you like a recommendation?', opts: ['Yes, please', 'No thanks'] } ] } ] }
+      ] }
+    ] },
+    { title: 'Timing and your current home', lead: 'Helps me plan around your calendar and your next move.', fields: [
+      { name: 'timeline', type: 'radio', label: 'When are you hoping to buy?', req: 1, opts: ['Right away', 'In 1 to 3 months', 'In 3 to 6 months', 'In 6+ months', 'Just exploring'] },
+      { name: 'move_date', type: 'date', label: 'Is there a move-in date you are aiming for?', hint: 'Optional.' },
+      { name: 'other_agent', type: 'radio', label: 'Are you currently working with another agent?', opts: ['Yes', 'No'], req: 1,
+        follow: [{ when: ['Yes'], fields: [
+          { name: 'other_agent_name', type: 'text', label: "Agent's name and brokerage" },
+          { name: 'other_agent_signed', type: 'radio', label: 'Have you signed an agreement with them?', opts: ['Yes', 'No', 'Not sure'] },
+          { type: 'note', text: 'No problem either way. I just want to be respectful of any agreement you already have.' } ] }] },
+      { name: 'housing', type: 'radio', label: 'Do you rent or own where you live now?', opts: ['Rent', 'Own', 'Something else'], req: 1,
+        follow: [
+          { when: ['Rent'], fields: [
+            { type: 'row', fields: [
+              { name: 'rent_amount', type: 'text', label: 'Monthly rent', im: 'numeric', ph: '$' },
+              { name: 'lease_end', type: 'date', label: 'Lease ends' } ] } ] },
+          { when: ['Own'], fields: [
+            { name: 'need_to_sell', type: 'radio', label: 'Do you need to sell before you buy?', opts: ['Yes', 'No', 'Not sure yet'] },
+            { name: 'current_address', type: 'text', label: 'Address of your current home', hint: 'Optional.', ac: 'street-address' },
+            { name: 'paid_off', type: 'radio', label: 'Is your home paid off?', opts: ['Yes', 'No'],
+              follow: [{ when: ['No'], fields: [{ name: 'mortgage_balance', type: 'text', label: 'Approximate remaining mortgage balance', hint: 'Optional. A rough number is fine.', im: 'numeric', ph: '$' }] }] },
+            { name: 'home_value_opinion', type: 'text', label: 'What do you think your home is worth today?', hint: 'Optional. Your best guess is perfect.', im: 'numeric', ph: '$' } ] } ] }
+    ] },
+    { title: 'Last things', lead: 'Almost there.', fields: [
+      { name: 'anything_else', type: 'textarea', label: 'Anything else you would like me to know?', hint: 'Optional.' },
+      { name: 'consent_bra', type: 'consent', req: 1, label: "I understand that before touring homes with Nook Realty Group, I will be asked to review and sign a written buyer representation agreement that explains the services provided and how compensation works. Submitting this form does not commit me to anything." },
+      
+      { type: 'note', text: 'I use your answers only to help with your home search.' }
+    ] }
+  ];
+
+  var form = document.getElementById('intake');
+  var stepsEl = document.getElementById('steps');
+  var cur = 0;
+  var resetHooks = [];
+
+  function h(tag, props) {
+    var e = document.createElement(tag);
+    props = props || {};
+    Object.keys(props).forEach(function (k) {
+      var v = props[k];
+      if (v === undefined || v === null || v === false) return;
+      if (k === 'class') e.className = v;
+      else if (k === 'text') e.textContent = v;
+      else if (k === 'html') e.innerHTML = v;
+      else e.setAttribute(k, v === true ? '' : v);
+    });
+    for (var i = 2; i < arguments.length; i++) {
+      var c = arguments[i];
+      if (c == null) continue;
+      e.append(c.nodeType ? c : document.createTextNode(c));
+    }
+    return e;
+  }
+
+  function renderPrice(f) {
+    var stops = [], v;
+    for (v = 200; v <= 1000; v += 25) stops.push(v);
+    for (v = 1050; v <= 2000; v += 50) stops.push(v);
+    for (v = 2100; v <= 3000; v += 100) stops.push(v);
+    for (v = 3250; v <= 5000; v += 250) stops.push(v);
+    function fmt(k, isMax) {
+      if (k >= 5000 && isMax) return '$5M+';
+      return k >= 1000 ? '$' + (k / 1000) + 'M' : '$' + k + 'K';
+    }
+    var q = h('fieldset', { class: 'q', 'data-name': f.name, 'data-req': '1', 'data-type': 'price' });
+    q.append(h('legend', { text: f.label }, h('span', { class: 'req', 'aria-hidden': 'true', text: ' *' })));
+    if (f.hint) q.append(h('p', { class: 'hint', text: f.hint }));
+    var out = h('output', { class: 'pricereadout', 'aria-live': 'polite' });
+    var minIn = h('input', { type: 'range', id: 'price_min_s', min: 0, max: stops.length - 1, step: 1, value: stops.indexOf(700) });
+    var maxIn = h('input', { type: 'range', id: 'price_max_s', min: 0, max: stops.length - 1, step: 1, value: stops.indexOf(1000) });
+    var minVal = h('b'), maxVal = h('b');
+    var unsure = h('input', { type: 'checkbox', id: 'price_unsure' });
+    var box = h('div', { class: 'pricebox' }, out,
+      h('label', { class: 'sl', for: 'price_min_s' }, h('span', {}, 'From ', minVal), minIn),
+      h('label', { class: 'sl', for: 'price_max_s' }, h('span', {}, 'To ', maxVal), maxIn),
+      h('label', { class: 'consent', for: 'price_unsure' }, unsure, h('span', { text: "I'm still figuring it out" })));
+    var hMin = h('input', { type: 'hidden', name: 'price_min' });
+    var hMax = h('input', { type: 'hidden', name: 'price_max' });
+    var hTxt = h('input', { type: 'hidden', name: 'price_range' });
+    q.append(box, hMin, hMax, hTxt, h('p', { class: 'err', role: 'alert', hidden: true }));
+    var touched = false;
+    function sync() {
+      var a = +minIn.value, b = +maxIn.value;
+      minVal.textContent = fmt(stops[a], false);
+      maxVal.textContent = fmt(stops[b], true);
+      if (unsure.checked) {
+        out.textContent = 'Still figuring it out';
+        hMin.value = ''; hMax.value = ''; hTxt.value = 'Still figuring it out';
+      } else if (touched) {
+        var t = fmt(stops[a], false) + ' to ' + fmt(stops[b], true);
+        out.textContent = t; hTxt.value = t;
+        hMin.value = stops[a] * 1000; hMax.value = stops[b] * 1000;
+      } else {
+        out.textContent = 'Slide to set your range';
+        hMin.value = ''; hMax.value = ''; hTxt.value = '';
+      }
+      minIn.disabled = unsure.checked; maxIn.disabled = unsure.checked;
+    }
+    minIn.addEventListener('input', function () { touched = true; if (+minIn.value > +maxIn.value) maxIn.value = minIn.value; sync(); });
+    maxIn.addEventListener('input', function () { touched = true; if (+maxIn.value < +minIn.value) minIn.value = maxIn.value; sync(); });
+    unsure.addEventListener('change', sync);
+    resetHooks.push(function () { touched = false; sync(); });
+    sync();
+    return h('div', { class: 'block' }, q);
+  }
+
+  function renderField(f) {
+    if (f.type === 'row') {
+      var row = h('div', { class: 'row' });
+      f.fields.forEach(function (x) { row.append(renderField(x)); });
+      return row;
+    }
+    if (f.type === 'note') return h('p', { class: 'fine', text: f.text });
+    if (f.type === 'group') {
+      var g = h('div', { class: 'group', 'data-when': f.when, hidden: true });
+      f.fields.forEach(function (x) { g.append(renderField(x)); });
+      return g;
+    }
+    if (f.type === 'price') return renderPrice(f);
+    var block = h('div', { class: 'block' });
+    var isGroup = f.type === 'radio' || f.type === 'check' || f.type === 'consent';
+    var q = h(f.type === 'consent' ? 'div' : (isGroup ? 'fieldset' : 'div'), { class: 'q', 'data-name': f.name, 'data-req': f.req ? '1' : null, 'data-type': f.type });
+    var id = 'f_' + f.name;
+    var req = f.req && f.type !== 'consent' ? h('span', { class: 'req', 'aria-hidden': 'true', text: ' *' }) : null;
+
+    if (f.type !== 'consent') {
+      q.append(isGroup ? h('legend', { text: f.label }, req) : h('label', { for: id, text: f.label }, req));
+      if (f.hint) q.append(h('p', { class: 'hint', html: f.hint }));
+    }
+    if (f.type === 'select') {
+      var sel = h('select', { id: id, name: f.name });
+      sel.append(h('option', { value: '', text: 'Choose one' }));
+      f.opts.forEach(function (o) { sel.append(h('option', { value: o, text: o })); });
+      q.append(sel);
+    } else if (f.type === 'textarea') {
+      q.append(h('textarea', { id: id, name: f.name, rows: 3 }));
+    } else if (f.type === 'radio' || f.type === 'check') {
+      var chips = h('div', { class: 'chips' });
+      f.opts.forEach(function (o, i) {
+        var inp = h('input', { type: f.type === 'radio' ? 'radio' : 'checkbox', name: f.name, value: o, id: id + '_' + i });
+        chips.append(h('label', { class: 'chip' }, inp, h('span', { text: o })));
+      });
+      q.append(chips);
+    } else if (f.type === 'consent') {
+      var cb = h('input', { type: 'checkbox', name: f.name, value: 'Yes', id: id });
+      q.append(h('label', { class: 'consent', for: id }, cb, h('span', { text: f.label + (f.req ? ' *' : '') })));
+    } else {
+      q.append(h('input', { type: f.type, id: id, name: f.name, autocomplete: f.ac, inputmode: f.im, placeholder: f.ph }));
+    }
+    q.append(h('p', { class: 'err', role: 'alert', hidden: true }));
+    block.append(q);
+    (f.follow || []).forEach(function (g) {
+      var c = h('div', { class: 'follow', 'data-when': f.name + ':' + g.when.join('|'), hidden: true });
+      g.fields.forEach(function (x) { c.append(renderField(x)); });
+      block.append(c);
+    });
+    return block;
+  }
+
+  steps.forEach(function (s, i) {
+    var sec = h('section', { class: 'step', 'data-i': i, hidden: i !== 0 });
+    sec.append(h('h2', { tabindex: '-1', text: s.title }));
+    if (s.lead) sec.append(h('p', { class: 'lead', text: s.lead }));
+    s.fields.forEach(function (f) { sec.append(renderField(f)); });
+    stepsEl.append(sec);
+  });
+
+  function hidden(el) { return !!el.closest('[hidden]'); }
+
+  function values(name) {
+    var out = [];
+    form.querySelectorAll('[name="' + name + '"]').forEach(function (inp) {
+      if (hidden(inp)) return;
+      if (inp.type === 'radio' || inp.type === 'checkbox') { if (inp.checked) out.push(inp.value); }
+      else if (inp.value.trim()) out.push(inp.value.trim());
+    });
+    return out;
+  }
+
+  function updateConditions() {
+    form.querySelectorAll('[data-when]').forEach(function (el) {
+      var w = el.getAttribute('data-when');
+      var i = w.indexOf(':');
+      var vals = values(w.slice(0, i));
+      var want = w.slice(i + 1).split('|');
+      el.hidden = !vals.some(function (v) { return want.indexOf(v) > -1; });
+    });
+  }
+
+  function setErr(q, msg) {
+    var e = q.querySelector('.err');
+    if (!e) return;
+    if (msg) { e.textContent = msg; e.hidden = false; q.classList.add('bad'); }
+    else { e.hidden = true; q.classList.remove('bad'); }
+  }
+
+  function validateStep(i) {
+    var sec = stepsEl.children[i];
+    var first = null;
+    sec.querySelectorAll('.q').forEach(function (q) {
+      if (hidden(q)) { setErr(q, ''); return; }
+      var name = q.getAttribute('data-name');
+      var type = q.getAttribute('data-type');
+      var v = values(name);
+      var msg = '';
+      if (q.getAttribute('data-req') && !v.length) {
+        msg = type === 'price' ? "Slide to set your range, or check the box if you're still figuring it out." : type === 'consent' ? 'Please check this box to continue.' : type === 'check' ? 'Choose at least one.' : (type === 'radio' || type === 'select') ? 'Please choose one.' : 'Please fill this in.';
+      } else if (v.length && type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v[0])) {
+        msg = "That email doesn't look quite right.";
+      } else if (v.length && type === 'tel' && v[0].replace(/\D/g, '').length < 10) {
+        msg = 'Please include all 10 digits.';
+      }
+      if (!msg && name === 'lender_phone' && !values('lender_phone').length && !values('lender_email').length) {
+        msg = 'Add a phone number or an email.';
+      }
+      setErr(q, msg);
+      if (msg && !first) first = q;
+    });
+    if (first) {
+      var t = first.querySelector('input, select, textarea');
+      if (t) t.focus();
+      first.scrollIntoView({ block: 'center' });
+    }
+    return !first;
+  }
+
+  function go(i) {
+    cur = i;
+    Array.prototype.forEach.call(stepsEl.children, function (s, n) { s.hidden = n !== i; });
+    document.getElementById('stepName').textContent = 'Step ' + (i + 1) + ' of ' + steps.length;
+    document.getElementById('stepTitle').textContent = steps[i].title;
+    document.querySelectorAll('#bar i').forEach(function (b, n) { b.classList.toggle('on', n <= i); });
+    document.getElementById('back').hidden = i === 0;
+    document.getElementById('next').textContent = i === steps.length - 1 ? 'Send to Jennifer' : 'Continue';
+    document.getElementById('hero').hidden = i !== 0;
+    document.getElementById('panel').classList.toggle('nohero', i !== 0);
+    window.scrollTo(0, 0);
+    var hd = stepsEl.children[i].querySelector('h2');
+    if (hd) hd.focus({ preventScroll: true });
+  }
+
+  function collect() {
+    var data = {};
+    form.querySelectorAll('[name]').forEach(function (inp) {
+      var n = inp.name;
+      if (n in data) return;
+      var v = values(n);
+      if (v.length) data[n] = (inp.type === 'checkbox' && inp.value !== 'Yes') || v.length > 1 ? v : v[0];
+    });
+    ['contact_pref', 'areas', 'features', 'property_type', 'mls_frequency'].forEach(function (k) {
+      if (data[k] && !Array.isArray(data[k])) data[k] = [data[k]];
+    });
+    data.form = 'buyer_intake';
+    data.submitted_at = new Date().toISOString();
+    return data;
+  }
+
+  var ENDPOINT = 'https://wopiuwndpuxzywtchbtt.supabase.co/functions/v1/submit-form';
+  function send(d, tries) {
+    return fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.ok) throw new Error('bad'); return j; }); })
+      .catch(function (err) {
+        if (tries <= 1) throw err;
+        return new Promise(function (res) { setTimeout(res, 1200); }).then(function () { return send(d, tries - 1); });
+      });
+  }
+  function submitAll() {
+    var btn = document.getElementById('next'), msg = document.getElementById('sendErr');
+    if (!msg) { msg = h('p', { class: 'err', id: 'sendErr', role: 'alert' }); btn.parentNode.insertBefore(msg, btn); }
+    msg.textContent = ''; btn.disabled = true; btn.textContent = 'Sending...';
+    var d = collect();
+    send(d, 3).then(function () { finish(d); }).catch(function () {
+      btn.disabled = false; btn.textContent = 'Send to Jennifer';
+      msg.textContent = "We couldn't send that just now, and nothing was lost on your screen. Please tap Send again, or email jennifer@nookrealtygroup.com or call (512) 960-2058.";
+    });
+  }
+  function finish(d) {
+    var prefs = (d.contact_pref || ['call', 'text', 'email']).map(function (p) { return p.toLowerCase(); });
+    var how = prefs.length > 1 ? prefs.slice(0, -1).join(', ') + ' or ' + prefs[prefs.length - 1] : prefs[0];
+    var t = document.getElementById('thanks');
+    t.innerHTML = '';
+    t.append(h('div', { class: 'done' },
+      h('h2', { tabindex: '-1', text: 'Thank you, ' + (d.first_name || 'friend') + '.' }),
+      h('p', { text: "I'll be in touch soon by " + how + '. In the meantime I will start curating homes that fit what you described.' }),
+      h('p', { text: 'Before we tour, I will send over a buyer representation agreement to review together, so you know exactly how we work.' }),
+      h('button', { type: 'button', class: 'back', id: 'again', text: 'Start over' })
+    ));
+    form.hidden = true;
+    document.getElementById('stepName').textContent = 'All done';
+    document.getElementById('stepTitle').textContent = '';
+    document.querySelectorAll('#bar i').forEach(function (b) { b.classList.add('on'); });
+    document.getElementById('hero').hidden = true;
+    t.hidden = false;
+    window.scrollTo(0, 0);
+    t.querySelector('h2').focus({ preventScroll: true });
+    document.getElementById('again').addEventListener('click', function () {
+      form.reset(); resetHooks.forEach(function (fn) { fn(); }); updateConditions(); form.hidden = false; t.hidden = true;
+      form.querySelectorAll('.q').forEach(function (q) { setErr(q, ''); });
+      go(0);
+    });
+  }
+
+  form.addEventListener('input', updateConditions);
+  form.addEventListener('change', updateConditions);
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    updateConditions();
+    if (!validateStep(cur)) return;
+    if (cur < steps.length - 1) go(cur + 1); else submitAll();
+  });
+  document.getElementById('back').addEventListener('click', function () { if (cur > 0) go(cur - 1); });
+
+  updateConditions();
+  go(0);
+})();
+</script>
+</body>
+</html>
