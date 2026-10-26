@@ -380,7 +380,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
     stepsEl.append(sec);
   });
 
-  function hidden(el) { return !!el.closest('[hidden]'); }
+  function hidden(el) { return !!el.closest('[data-when][hidden]'); }
 
   function values(name) {
     var out = [];
