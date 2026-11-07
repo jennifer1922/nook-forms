@@ -206,7 +206,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
         follow: [{ when: ['Something else'], fields: [{ name: 'why_other', type: 'text', label: 'Tell me a little more' }] }] },
       { name: 'need_new_home', type: 'radio', label: 'Will you need help finding your next home?', opts: ['Yes', 'No', 'Not sure yet'],
         follow: [{ when: ['Yes'], fields: [{ name: 'buy_first', type: 'radio', label: 'Would you buy before or after selling?', opts: ['Buy first', 'Sell first', 'Both at the same time', 'Not sure yet'] }] }] },
-      { name: 'mortgage', type: 'radio', label: 'Is there a mortgage on the home?', opts: ['Yes', 'No, it is paid off', 'Prefer not to say'], hint: 'A yes or no is plenty for now.' },
+      { name: 'mortgage', type: 'radio', label: 'Is there a mortgage on the home?', opts: ['Yes', 'No'],
+        follow: [{ when: ['Yes'], fields: [{ name: 'payoff_balance', type: 'text', label: 'Approximate payoff balance', hint: 'Optional. A rough number is fine.', im: 'numeric', ph: '$' }] }] },
       { name: 'price_idea', type: 'text', label: 'Do you have a price in mind?', hint: 'Optional. Leave it blank if you would rather talk it through.', im: 'numeric', ph: '$' },
       { name: 'other_agent', type: 'radio', label: 'Are you working with another agent, or have you listed before?', opts: ['Yes', 'No'],
         follow: [{ when: ['Yes'], fields: [
@@ -472,8 +473,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
     t.innerHTML = '';
     t.append(h('div', { class: 'done' },
       h('h2', { tabindex: '-1', text: 'Thank you, ' + (d.first_name || 'friend') + '.' }),
-      h('p', { text: "I'll be in touch soon by " + how + '. In the meantime I will take a look at your home and come ready with questions and ideas.' }),
-      h('p', { text: 'If you decide to move forward, I will send a more detailed form so I can build the best plan for your home.' }),
+      h('p', { text: 'Thank you for trusting me with your home. It holds your memories, and I do not take that lightly.' }),
+      h('p', { text: "You'll hear from me within 48 hours, by " + how + '. Until then, I hope you get a quiet moment to enjoy your space. I am looking forward to getting to know you and your story.' }),
+      h('p', { text: 'Warmly, Jennifer' }),
       h('button', { type: 'button', class: 'back', id: 'again', text: 'Start over' })
     ));
     form.hidden = true;
