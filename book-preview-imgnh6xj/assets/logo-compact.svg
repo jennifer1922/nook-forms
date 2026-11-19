@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 80" role="img" aria-label="Nook">
+  <title>Nook</title>
+  <!-- Compact mark: one hairline, one ring, gold sun on the right. -->
+  <path d="M5.5 78 V 30.5 A 18.5 18.5 0 0 1 42.5 30.5 V 78" fill="#7A1E2B" stroke="#EFB79F" stroke-width="1.15" stroke-linejoin="round"/>
+  <path d="M11 78 V 32.2 A 13 13 0 0 1 37 32.2 V 78" fill="#3A0B16" stroke="#F3DACD" stroke-width="0.9"/>
+  <circle cx="31.8" cy="43" r="4.8" fill="none" stroke="#E2C482" stroke-width="0.7" opacity="0.85"/>
+  <circle cx="31.8" cy="43" r="3.15" fill="#E2C482"/>
+</svg>

@@ -1,0 +1,421 @@
+/* Nook booking pages. Tokens from the Nook Design System. */
+
+:root {
+  --limestone: #F6F1EA;
+  --blush: #F3DACD;
+  --peach: #EFB79F;
+  --rose-soft: #D9807F;
+  --rose: #A8384C;
+  --maroon: #7A1E2B;
+  --oxblood: #5E1522;
+  --door: #3A0B16;
+  --night: #2A0710;
+  --gold: #E2C482;
+  --gold-deep: #B8924A;
+  --ink: #3A2428;
+  --ink-soft: #5B3A3F;
+  --font-display: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --font-body: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 40px;
+  --space-6: 64px;
+  --content: 1040px;
+  --iframe-height: 860px;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--limestone);
+  color: var(--ink);
+  font: 400 16px/1.625 var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+img, svg { display: block; max-width: 100%; }
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover { color: var(--maroon); }
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--gold-deep);
+  outline-offset: 3px;
+}
+
+.skip {
+  position: absolute;
+  left: 12px;
+  top: -40px;
+  z-index: 20;
+  background: var(--door);
+  color: var(--limestone);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+}
+
+.skip:focus { top: 12px; }
+
+/* Draft ribbon: remove before any public launch. */
+.draft-banner {
+  background: var(--door);
+  color: var(--limestone);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  padding: 10px 20px;
+  text-align: center;
+}
+
+.draft-banner strong {
+  display: inline-block;
+  color: var(--gold);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  margin-right: 8px;
+}
+
+.wrap {
+  width: min(var(--content), calc(100% - 32px));
+  margin: 0 auto;
+}
+
+@media (min-width: 720px) {
+  .wrap { width: min(var(--content), calc(100% - 80px)); }
+}
+
+/* Header */
+.site-header {
+  padding: 20px 0 8px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--ink);
+  width: fit-content;
+}
+
+.brand:hover { color: var(--ink); }
+
+.brand-mark {
+  width: 28px;
+  height: auto;
+  flex: none;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.brand-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--maroon);
+  line-height: 1.2;
+}
+
+.brand-sub {
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* Hero */
+.hero {
+  display: grid;
+  gap: 28px;
+  padding: 24px 0 8px;
+  align-items: end;
+}
+
+@media (min-width: 840px) {
+  .hero {
+    grid-template-columns: minmax(0, 1.15fr) minmax(220px, 0.75fr);
+    gap: 56px;
+    padding: 36px 0 16px;
+    align-items: center;
+  }
+
+  .page-lending .hero {
+    grid-template-columns: minmax(0, 1.35fr) minmax(200px, 0.55fr);
+  }
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--maroon);
+}
+
+.placeholder-block {
+  position: relative;
+  margin: 0 0 16px;
+}
+
+.placeholder-block:last-child { margin-bottom: 0; }
+
+.placeholder-label {
+  display: inline-block;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+  border: 1px dashed var(--gold-deep);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-bottom: 8px;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.875rem, 5vw, 2.75rem);
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--maroon);
+  margin: 0 0 16px;
+  text-wrap: balance;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--rose);
+}
+
+.lede {
+  margin: 0 0 8px;
+  max-width: 46ch;
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  padding: 12px 22px;
+  min-height: 44px;
+  background: var(--maroon);
+  color: var(--limestone);
+  font: 500 0.875rem/1 var(--font-body);
+  text-decoration: none;
+  border-radius: 999px;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  background: var(--oxblood);
+  color: var(--limestone);
+}
+
+/* Arch-cropped hero photo. */
+.photo-slot {
+  margin: 0;
+  justify-self: center;
+  width: min(100%, 240px);
+}
+
+@media (min-width: 840px) {
+  .photo-slot { width: 100%; max-width: 340px; justify-self: end; }
+  .page-lending .photo-slot { max-width: 260px; }
+}
+
+.photo-frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 999px 999px 0 0;
+  overflow: hidden;
+  background: var(--blush);
+  box-shadow: inset 0 0 0 1px rgba(184, 146, 74, 0.45);
+}
+
+.photo-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.page-realty .photo-frame img { object-position: 58% 42%; }
+.page-lending .photo-frame img { object-position: 50% 55%; }
+
+.photo-frame::after {
+  content: "";
+  position: absolute;
+  inset: 8px 8px 0;
+  border-radius: 999px 999px 0 0;
+  border: 1px solid rgba(226, 196, 130, 0.55);
+  border-bottom: 0;
+  pointer-events: none;
+}
+
+/* Booking card */
+.booking {
+  padding: 8px 0 var(--space-6);
+}
+
+.booking-card {
+  background: #fffdf9;
+  border: 1px solid rgba(217, 128, 127, 0.28);
+  border-radius: var(--radius-md);
+  padding: 20px 16px 12px;
+  box-shadow: 0 1px 0 rgba(58, 11, 22, 0.04);
+}
+
+@media (min-width: 720px) {
+  .booking-card { padding: 28px 28px 16px; }
+}
+
+.booking-card header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--gold-deep);
+}
+
+.booking-card h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.5rem;
+  color: var(--door);
+}
+
+.booking-note {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+.embed {
+  width: 100%;
+  height: var(--iframe-height);
+  min-height: var(--iframe-height);
+  border: 0;
+  display: block;
+  background: #fffdf9;
+}
+
+@media (max-width: 639px) {
+  /* Tall enough for Google's stacked calendar + slot list, so the iframe itself does not scroll. */
+  :root { --iframe-height: 1580px; }
+}
+
+.after-box {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  max-width: 40ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.fallback {
+  margin: 12px 0 4px;
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.fallback a { color: var(--maroon); }
+
+/* Footer */
+.site-footer {
+  margin-top: auto;
+  background: var(--oxblood);
+  color: var(--limestone);
+  border-top: 1px solid var(--gold);
+  padding: 28px 0 36px;
+}
+
+.site-footer .wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-brand {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 4px;
+}
+
+.footer-legal,
+.footer-phone,
+.footer-disclosure {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: rgba(246, 241, 234, 0.92);
+}
+
+.footer-phone a {
+  color: var(--limestone);
+  text-decoration: none;
+}
+
+.footer-phone a:hover { color: var(--gold); }
+
+.footer-disclosure .placeholder-label {
+  color: var(--gold);
+  border-color: rgba(226, 196, 130, 0.7);
+  margin-right: 8px;
+  margin-bottom: 0;
+}
+
+@media (min-width: 720px) {
+  .site-footer .wrap {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px 32px;
+  }
+}
